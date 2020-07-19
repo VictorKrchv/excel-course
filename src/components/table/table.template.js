@@ -3,13 +3,21 @@ const CODES = {
     Z: 90
 }
 
-function toCel(_, col) {
-    return `<div class="cell" data-col="${col + 1}"></div>`
+function toCel(row) {
+    return function(_, col) {
+        return `<div 
+                    contenteditable="true"
+                    class="cell" 
+                    data-col="${col}" 
+                    data-type="cell"
+                    data-id="${row}:${col}">
+                </div>`
+    }
 }
 
 function toColumn(col, index) {
     return `
-    <div class="column" data-type="resizable"  data-col="${index + 1}">
+    <div class="column" data-type="resizable"  data-col="${index}">
         ${col}
         <div class="col-resize" data-resize="col"></div>
     </div>
@@ -21,7 +29,7 @@ function createRow(content, index) {
             ? `<div class="row-resize" data-resize="row"></div>`
             : ''
     return `
-        <div class="row" data-row="${index + 1}" data-type="resizable"> 
+        <div class="row" data-row="${index}" data-type="resizable"> 
             <div class="row-info">${index ? index : ''}
                 ${resizer}
             </div>
@@ -46,12 +54,12 @@ export function createTable(rowCount = 15) {
 
     rows.push(createRow(cols))
 
-    for (let i = 0; i < rowCount; i++) {
+    for (let row = 0; row < rowCount; row++) {
         const cells = new Array(colsCount)
             .fill('')
-            .map(toCel)
+            .map(toCel(row))
             .join('')
-        rows.push(createRow(cells, i + 1))
+        rows.push(createRow(cells, row + 1))
     }
 
     return rows.join('')
