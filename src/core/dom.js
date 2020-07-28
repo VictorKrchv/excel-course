@@ -6,36 +6,8 @@ class Dom {
             : selector
     }
 
-    html(html) {
-        if (typeof html === 'string') {
-            this.$el.innerHTML = html
-            return this
-        }
-        return this.$el.innerHTML.trim()
-    }
-
-    text(text) {
-        if (typeof text === 'string') {
-            this.$el.textContent = text
-            return this
-        }
-        if (this.$el.tagName.toLowerCase() === 'input') {
-            return this.$el.value.trim()
-        }
-        return this.$el.textContent.trim()
-    }
-
-    clear() {
-        this.html('')
-        return this
-    }
-
-    on(eventType, fn) {
-        this.$el.addEventListener(eventType, fn)
-    }
-
-    off(eventType, fn) {
-        this.$el.removeEventListener(eventType, fn)
+    addClass(className) {
+        return this.$el.classList.add(className)
     }
 
     append(node) {
@@ -51,12 +23,39 @@ class Dom {
         return this
     }
 
+    attr(name, value) {
+        if (value) {
+            this.$el.setAttribute(name, value)
+            return this
+        }
+        return this.$el.getAttribute(name)
+    }
+   
     closest(selector) {
         return $(this.$el.closest(selector))
     }
 
+    css(styles = {}) {
+        Object.keys(styles)
+            .forEach(key => this.$el.style[key] = styles[key])
+        return this
+    }
+
+    clear() {
+        this.html('')
+        return this
+    }
+
+
     getCoords() {
         return this.$el.getBoundingClientRect()
+    }
+
+    getStyles(styles = []) {
+        return styles.reduce((res, s) => {
+            res[s] = this.$el.style[s]
+            return res
+        }, {})
     }
 
     get data() {
@@ -80,15 +79,14 @@ class Dom {
         return this.$el.querySelectorAll(selector)
     }
 
-    css(styles = {}) {
-        Object.keys(styles)
-            .forEach(key => this.$el.style[key] = styles[key])
-        return this
+    on(eventType, fn) {
+        this.$el.addEventListener(eventType, fn)
     }
 
-    addClass(className) {
-        return this.$el.classList.add(className)
+    off(eventType, fn) {
+        this.$el.removeEventListener(eventType, fn)
     }
+
 
     removeClass(className) {
         return this.$el.classList.remove(className)
@@ -103,6 +101,25 @@ class Dom {
             }
         }
         return this.data.id
+    }
+
+    html(html) {
+        if (typeof html === 'string') {
+            this.$el.innerHTML = html
+            return this
+        }
+        return this.$el.outerHTML.trim()
+    }
+
+    text(text) {
+        if (typeof text !== 'undefined') {
+            this.$el.textContent = text
+            return this
+        }
+        if (this.$el.tagName.toLowerCase() === 'input') {
+            return this.$el.value.trim()
+        }
+        return this.$el.textContent.trim()
     }
 }
 
